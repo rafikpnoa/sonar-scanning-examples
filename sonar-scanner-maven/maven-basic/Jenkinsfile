@@ -1,0 +1,22 @@
+pipeline {
+    agent any 
+    
+    stages { 
+        stage('SCM Checkout') {
+            steps{
+           git branch: 'master', url: 'https://github.com/rafikpnoa/sonar-scanning-examples.git'
+            }
+        }
+        // run sonarqube test
+        stage('Run Sonarqube') {
+            environment {
+                scannerHome = tool 'sonar-scanning-examples/sonar-scanner-maven/maven-basic';
+            }
+            steps {
+              withSonarQubeEnv(credentialsId: 'test', installationName: 'lil sonar installation') {
+                sh "${scannerHome}/bin/sonar-scanner"
+              }
+            }
+        }
+    }
+}
